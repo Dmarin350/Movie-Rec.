@@ -84,10 +84,7 @@
         <input type="text" id="director" placeholder="Enter director's name" required>
       </div>
 
-      <div class="form-group">
-        <label for="cast">🧑‍🎤 Cast Members</label>
-        <textarea id="cast" rows="3" placeholder="Enter cast members separated by commas" required></textarea>
-      </div>
+      
 
       <div class="form-group">
         <label for="description">📝 Description</label>
@@ -95,8 +92,8 @@
       </div>
 
       <div class="form-group">
-        <label for="duration">⏱️ Duration (in minutes)</label>
-        <input type="number" id="duration" placeholder="Enter duration in minutes" required>
+        <label for="cast">🧑‍🎤 Cast Members</label>
+        <textarea id="cast" rows="3" placeholder="Enter cast members separated by commas" required></textarea>
       </div>
 
       <button type="button" id="predict-btn">Predict Rating</button>
@@ -113,9 +110,9 @@
       const director = document.getElementById("director").value;
       const cast = document.getElementById("cast").value.split(",").map(member => member.trim());
       const description = document.getElementById("description").value;
-      const duration = document.getElementById("duration").value;
+     
 
-      const movieData = { title, director, cast, description, duration };
+      const movieData = { title, director, cast, description };
 
       try {
         const response = await fetch("/predict", {
