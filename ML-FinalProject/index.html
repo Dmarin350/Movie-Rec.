@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Movie Rating Predictor</title>
   <style>
-    /* Netflix-inspired styling */
     body {
       font-family: Arial, sans-serif;
       background-color: #141414;
@@ -100,43 +99,41 @@
         <input type="number" id="duration" placeholder="Enter duration in minutes" required>
       </div>
 
-      <button type="button" id="save-btn">Save Data</button>
+      <button type="button" id="predict-btn">Predict Rating</button>
     </form>
     <div id="output">
-      <h2>⭐ Data Saved as CSV</h2>
+      <h2>⭐ Predicted Rating:</h2>
+      <p id="rating-result">-</p>
     </div>
   </div>
 
   <script>
-    document.getElementById("save-btn").addEventListener("click", () => {
-      // Get form data
+    document.getElementById("predict-btn").addEventListener("click", async () => {
       const title = document.getElementById("title").value;
       const director = document.getElementById("director").value;
-      const cast = document.getElementById("cast").value;
+      const cast = document.getElementById("cast").value.split(",").map(member => member.trim());
       const description = document.getElementById("description").value;
       const duration = document.getElementById("duration").value;
 
-      // Prepare CSV content
-      const headers = ["Title", "Director", "Cast", "Description", "Duration"];
-      const data = [title, director, cast, description, duration];
-      const csvContent = [headers, data].map(row => row.join(",")).join("\n");
+      const movieData = { title, director, cast, description, duration };
 
-      // Create a downloadable file
-      const blob = new Blob([csvContent], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
+      try {
+        const response = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(movieData),
+        });
 
-      // Create a link to download the file
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "movie_data.csv";
-      a.click();
-
-      // Clean up URL object
-      URL.revokeObjectURL(url);
-
-      // Show feedback to user
-      document.getElementById("output").textContent = "⭐ Data Saved as CSV!";
+        const result = await response.json();
+        document.getElementById("rating-result").textContent = result.rating || "Error predicting rating!";
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("rating-result").textContent = "Error connecting to server!";
+      }
     });
   </script>
+</body>
+</html>
+
 </body>
 </html>
