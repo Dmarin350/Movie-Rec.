@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
-from rating_NN import movie_rater  # Import your model function
+from rating_NN import train  # Import your model function
 
 app = Flask(__name__)
 
@@ -20,11 +20,10 @@ def predict():
         director = movie_data.get("director", "")
         cast = ", ".join(movie_data.get("cast", []))  # Join cast list
         description = movie_data.get("description", "")
-        duration = int(movie_data.get("duration", 0))
 
         # Call the `movie_rater` function
-        features = [title, director, cast, description, duration]
-        predicted_rating = movie_rater(features)
+        features = [title, director, description, cast]
+        predicted_rating = train(features)
 
         # Return the prediction
         return jsonify({"rating": round(predicted_rating, 2)})
